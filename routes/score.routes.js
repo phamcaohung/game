@@ -10,7 +10,7 @@ router.use(requireAuth, decodeToken)
 
 router.get("/rank", scoreController.getRank)
 
-router.get("/:id", scoreController.getScore)
+router.get("/", scoreController.getScore)
 
 router.put("/:id", scoreController.updateScore)
 
@@ -18,20 +18,13 @@ export default router
 
 /**
 * @swagger
-*  /api/v1/scores/{id}:
+*  /api/v1/scores:
 *    get:
 *      summary: Get score by ID
 *      tags:
 *        - Score
 *      security:
 *        - bearerAuth: []
-*      parameters:
-*        - in: path
-*          name: id
-*          schema:
-*            type: string
-*          required: true
-*          description: Score ID
 *      responses:
 *        '200':
 *          description: _id, point, power, user (_id, name)

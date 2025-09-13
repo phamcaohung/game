@@ -90,14 +90,15 @@ export default class userController {
 
     static async getProfileUser(req, res) {
         try {
-            const id = req.params.id
-
-            const user = await usersDAO.getUserById(id)
+            const userId = req.userId
+            console.log("userId: ", userId);
+            
+            const user = await usersDAO.getUserById(userId)
 
             if (!user)
                 return res.status(404).json({ message: "User not found" })
 
-            const score = await scoreDAO.findScoreByUser(id)
+            const score = await scoreDAO.findScoreByUser(userId)
 
             const responseData = {
                 _id: user._id,

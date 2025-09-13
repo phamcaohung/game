@@ -4,9 +4,13 @@ import scoreDAO from "../dao/score.dao.js"
 export default class scoreController {
     static async getScore(req, res) {
         try {
-            const scoreId = req.params.id
+            const userId = req.userId
+            console.log("userId: ", userId);
 
-            const score = await scoreDAO.findScoreById(scoreId)
+            const score = await scoreDAO.findScoreByUser(userId)
+
+            console.log("score: ", score);
+            
 
             res.status(200).json(score)
         } catch (e) {

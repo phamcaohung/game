@@ -14,7 +14,7 @@ router.post("/signin", usersController.signin)
 
 router.post("/logout", usersController.logout)
 
-router.get("/profile/:id", requireAuth, decodeToken, usersController.getProfileUser)
+router.get("/profile", requireAuth, decodeToken, usersController.getProfileUser)
 
 export default router
 

@@ -11,7 +11,6 @@ export default class inventoryController {
     static async createRandomItem(req, res) {
         try {
             const userId = req.userId
-            console.log("userId: ", userId);
             
             const { master } = req.query
 
@@ -37,10 +36,7 @@ export default class inventoryController {
                     lucky: getRandomNumber(-2, 2)
                 })
 
-                console.log("Inventory: ", inventory);
-
                 const inventoryId = await inventoryDAO.createInventory(inventory)
-                console.log("InventoryId: ", inventoryId);
                 
                 await usersDAO.addInventoryToUser(userId, inventoryId)
 
