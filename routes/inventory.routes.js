@@ -11,5 +11,7 @@ router.use(requireAuth, decodeToken)
 
 router.post("/victory", inventoryController.createRandomItem)
 
+router.get("/", inventoryController.getInventories)
+
 
 export default router

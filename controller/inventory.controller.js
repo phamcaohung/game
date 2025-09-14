@@ -11,7 +11,7 @@ export default class inventoryController {
     static async createRandomItem(req, res) {
         try {
             const userId = req.userId
-            
+
             const { master } = req.query
 
             const drop = Math.floor(Math.random() * 5) + 1
@@ -27,7 +27,11 @@ export default class inventoryController {
                     return res.status(500).json({ error: "Failed To Get Random Item" });
                 }
 
-                const inventory = new Inventory({
+                const inventory = randomItem.category == 'gem' ? new Inventory({
+                    item: randomItem,
+                    user: new ObjectId(userId),
+                    lucky: getRandomNumber(-2, 2)
+                }) : new Inventory({
                     item: randomItem,
                     user: new ObjectId(userId),
                     atk: getRandomNumber(-666, (666 + parseInt(master) * 20)),
@@ -37,7 +41,7 @@ export default class inventoryController {
                 })
 
                 const inventoryId = await inventoryDAO.createInventory(inventory)
-                
+
                 await usersDAO.addInventoryToUser(userId, inventoryId)
 
                 newInventories.push(inventory)
@@ -46,6 +50,17 @@ export default class inventoryController {
             await scoreDAO.updateScoreAfterVictory(userId)
 
             res.status(200).json(newInventories)
+        } catch (e) {
+            res.status(500).json({ error: e.message })
+        }
+    }
+
+    static async getInventories(req, res) {
+        try {
+            const userId = req.userId
+            const inventories = await inventoryDAO.getInventoriesByUser(userId)
+            
+            res.status(200).json(inventories)
         } catch (e) {
             res.status(500).json({ error: e.message })
         }

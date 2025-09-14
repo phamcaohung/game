@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb"
 
 let inventoryCollection
 
@@ -18,6 +19,14 @@ export default class inventoryDAO {
             return result.insertedId
         } catch (e) {
             throw new Error("Error Creating Inventory: " + e)
+        }
+    }
+
+    static async getInventoriesByUser(userId) {
+        try {
+            return await inventoryCollection.find({ user: new ObjectId(userId) }).toArray()
+        } catch (e) {
+            throw new Error("Error Getting Inventories: " + e)
         }
     }
     
