@@ -79,6 +79,7 @@ const lookupSlotItemOnly = (slot) => ([
                 $cond: {
                     if: { $ifNull: ["$temp_inventory", false] },
                     then: {
+                        _id: "$temp_inventory._id",
                         item: "$temp_inventory.item",
                         atk: "$temp_inventory.atk", 
                         def: "$temp_inventory.def",
