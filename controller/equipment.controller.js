@@ -3,6 +3,8 @@ import equipmentDAO from "../dao/equipment.dao.js"
 import usersDAO from "../dao/user.dao.js"
 import Equipment from "../model/equipment.model.js"
 import { ObjectId } from "mongodb"
+import inventoryDAO from "../dao/inventory.dao.js"
+import { randomNumberAdd } from "../config/random.js"
 
 
 export default class equipmentController {

@@ -13,5 +13,4 @@ router.post("/", equipmentController.equipItem)
 
 router.get("/", equipmentController.getEquipment)
 
-
 export default router

@@ -13,5 +13,10 @@ router.post("/victory", inventoryController.createRandomItem)
 
 router.get("/", inventoryController.getInventories)
 
+router.get("/gem", inventoryController.getInventoriesGem)
+
+router.get("/not-gem", inventoryController.getInventoriesNotGem)
+
+router.post("/:id/mosaic", inventoryController.mosaicGem)
 
 export default router

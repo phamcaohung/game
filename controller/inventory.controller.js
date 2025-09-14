@@ -2,7 +2,7 @@ import itemsDAO from "../dao/item.dao.js"
 import usersDAO from "../dao/user.dao.js"
 import Inventory from "../model/inventory.model.js"
 import inventoryDAO from "../dao/inventory.dao.js"
-import { getRandomItemByCategory, getRandomNumber } from "../config/random.js"
+import { getRandomItemByCategory, getRandomNumber, randomNumberAdd } from "../config/random.js"
 import scoreDAO from "../dao/score.dao.js"
 import { ObjectId } from "mongodb"
 
@@ -40,7 +40,7 @@ export default class inventoryController {
                     return res.status(500).json({ error: "Failed To Get Random Item" });
                 }
 
-                const inventory = randomItem.category == 'gem' ? new Inventory({
+                const inventory = randomItem.category === 'Gem' ? new Inventory({
                     item: randomItem,
                     user: new ObjectId(userId),
                     lucky: getRandomNumber(-2, 2)
@@ -72,6 +72,51 @@ export default class inventoryController {
         try {
             const userId = req.userId
             const inventories = await inventoryDAO.getInventoriesByUser(userId)
+
+            res.status(200).json(inventories)
+        } catch (e) {
+            res.status(500).json({ error: e.message })
+        }
+    }
+
+    static async mosaicGem(req, res) {
+        try {
+            const id = req.params.id
+            const gemId = req.body.gemId
+            
+            const gem = await inventoryDAO.findInventoryById(gemId)
+            if(!gem)
+                return res.status(404).json({ message: "Gem Not Found" })
+
+            const value = randomNumberAdd(gem.item.name)
+
+            const data = await inventoryDAO.mosaicGemToInventory(id, value)
+            if(data)
+                await inventoryDAO.deleteGemAfterMosaic(gemId)
+            
+            res.status(200).json(data)
+        } catch (e) {
+            res.status(500).json({ error: e.message })
+        }
+    }
+
+    static async getInventoriesGem(req, res) {
+        try {
+            const userId = req.userId
+
+            const inventories = await inventoryDAO.getGemByUser(userId)
+
+            res.status(200).json(inventories)
+        } catch (e) {
+            res.status(500).json({ error: e.message })
+        }
+    }
+
+    static async getInventoriesNotGem(req, res) {
+        try {
+            const userId = req.userId
+
+            const inventories = await inventoryDAO.getNotGemByUser(userId)
 
             res.status(200).json(inventories)
         } catch (e) {

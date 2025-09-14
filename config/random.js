@@ -1,13 +1,35 @@
 const gems = [
-    { name: 'Crystal', weight: 15 },
-    { name: 'Shard', weight: 15 },
-    { name: 'Prism', weight: 15 },
+    { name: 'Crystal', weight: 22 },
+    { name: 'Shard', weight: 19 },
+    { name: 'Prism', weight: 17 },
     { name: 'Obelisk', weight: 15 },
-    { name: 'Orb', weight: 15 },
-    { name: 'Jewel', weight: 10 },
-    { name: 'Hexa', weight: 10 },
-    { name: 'Cluster', weight: 5 }
+    { name: 'Orb', weight: 12 },
+    { name: 'Jewel', weight: 9 },
+    { name: 'Hexa', weight: 5 },
+    { name: 'Cluster', weight: 1 }
 ]
+
+const typeRange = {
+    Crystal: [1, 10],
+    Shard: [10, 20], 
+    Prism: [10, 30], 
+    Obelisk: [20, 40], 
+    Orb: [20, 50], 
+    Jewel: [30, 60], 
+    Hexa: [30, 70], 
+    Cluster: [40, 100],     
+}
+
+const colorRange = {
+    Red: 1.5,
+    Gold: 1,
+    Light_Green: 1.5,
+    Turquoise: 2,
+    Blue: 2.5,
+    Dark_Blue: 3,
+    Lilac: 3.5,
+    Purple: 4
+} 
 
 export const getRandomNumber = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min
@@ -29,4 +51,14 @@ export const getRandomItemByCategory = () => {
             r -= gem.weight
         }
     }
+}
+
+export const randomNumberAdd = (name) => {
+    const [type, color] = name.split("_")
+    const [min, max] = typeRange[type]
+    
+    const base = getRandomNumber(min, max)
+    const value = base + base * colorRange[color]
+    
+    return Math.floor(value)
 }
