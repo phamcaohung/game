@@ -9,7 +9,7 @@ import equipmentRouters from "./routes/equipment.routes.js"
 import swaggerDocs from './swagger.js'
 
 const app = express()
-app.use(cors())
+app.use(cors(['localhost:8081']))
 app.use(express.json())
 app.use(passport.initialize())
 swaggerDocs(app, process.env.PORT || 5000)
