@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb"
 
 let equipmentCollection
 
@@ -12,12 +13,15 @@ export default class equipmentDAO {
         }
     }
 
-    static async createEquipment(equipment) {
+    static async setEquipment(equipment, userId) {
         try {
-            const result = await equipmentCollection.insertOne(equipment)
-            return result.insertedId
+            return await equipmentCollection.replaceOne(
+                { user: new ObjectId(userId) },
+                equipment,
+                { upsert: true }
+            )
         } catch (e) {
-            throw new Error("Error Add Equipment To User: " + e)
+            throw new Error("Error Set Equipment: " + e)
         }
     }
 
@@ -32,7 +36,7 @@ export default class equipmentDAO {
 
     static async getEquipmentByUser(userId) {
         try {
-            return await equipmentCollection.find({ user: userId }).toArray()
+            return await equipmentCollection.find({ user: new ObjectId(userId) }).toArray()
         } catch (e) {
             throw new Error("Error Get Equipment By User: " + e)
         }

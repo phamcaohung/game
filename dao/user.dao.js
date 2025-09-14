@@ -61,13 +61,24 @@ export default class usersDAO {
 
     static async addEquipmentToUser(userId, equipmentId) {
         try {
-            return await usersCollection.findOneAndUpdate(
+            return await usersCollection.updateOne(
                 { _id: new ObjectId(userId) },
-                { $addToSet: { equipments: equipmentId } }
+                { $set: { equip: new ObjectId(equipmentId) } }
             )
         } catch (e) {
             throw new Error("Error Add Equipment To User: " + e)
         }
     }
 
+    static async updateUser(id, data) {
+        try {
+            return await usersCollection.findOneAndUpdate(
+                { _id: new ObjectId(id) },
+                { $set: { name: data } },
+                { returnDocument: 'after' }
+            )
+        } catch (e) {
+            throw new Error("Error Update Name: " + e)
+        }
+    }
 }

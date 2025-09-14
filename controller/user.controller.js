@@ -20,7 +20,7 @@ export default class userController {
             })
 
             await usersDAO.createUser(data)
-            
+
             res.status(200).json("Create User Successfully")
         } catch (e) {
             res.status(500).json({ error: e.message })
@@ -31,12 +31,12 @@ export default class userController {
         try {
             const { email, password } = req.body
             const existingUser = await usersDAO.signIn(email)
-            
+
             if (!existingUser)
                 return res.status(400).json({
                     message: "Invalid Email",
                 })
-            
+
             const isPasswordCorrect = await bcrypt.compare(password, existingUser.password)
             if (!isPasswordCorrect)
                 return res.status(400).json({
@@ -58,11 +58,17 @@ export default class userController {
             })
             await tokenDAO.createToken(newRefreshToken)
 
-            const score = new Score({
-                user: existingUser._id
-            })
+            console.log("existingUser: ", existingUser);
+            
+            const score = await scoreDAO.findScoreByUser(existingUser._id)
+            if (!score) {
+                const score = new Score({
+                    user: existingUser._id
+                })
 
-            await scoreDAO.createScore(score)
+                await scoreDAO.createScore(score)
+            }
+
 
             res.status(200).json({
                 token,
@@ -92,7 +98,7 @@ export default class userController {
         try {
             const userId = req.userId
             console.log("userId: ", userId);
-            
+
             const user = await usersDAO.getUserById(userId)
 
             if (!user)
@@ -108,6 +114,19 @@ export default class userController {
             }
 
             res.status(200).json(responseData)
+        } catch (e) {
+            res.status(500).json({ error: e.message })
+        }
+    }
+
+    static async updateProfileUser(req, res) {
+        try {
+            const userId = req.userId
+            const { name } = req.body
+
+            const user = await usersDAO.updateUser(userId, name)
+            
+            res.status(200).json({ name: user.name })
         } catch (e) {
             res.status(500).json({ error: e.message })
         }

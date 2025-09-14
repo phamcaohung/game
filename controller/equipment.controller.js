@@ -1,24 +1,25 @@
+import e from "express"
 import equipmentDAO from "../dao/equipment.dao.js"
 import usersDAO from "../dao/user.dao.js"
 import Equipment from "../model/equipment.model.js"
+import { ObjectId } from "mongodb"
 
 
 export default class equipmentController {
     static async equipItem(req, res) {
         try {
             const userId = req.userId
-            const { head, body, legs, jewelry, weapon, shield } = req.body
-            const equipment =  new Equipment({
-                head, body, legs, jewelry, weapon, shield, user: userId
+            const { head, body, leg, jewelry, weapon, shield } = req.body
+            const equipment = new Equipment({
+                head, body, leg, jewelry, weapon, shield, user: new ObjectId(userId)
             })
-            console.log("Equipment: ", equipment);
-            
-            const equipmentId = await equipmentDAO.createEquipment(equipment)
 
-            await usersDAO.addEquipmentToUser(userId, equipmentId)
+            const result = await equipmentDAO.setEquipment(equipment, userId)
 
-            const data = await equipmentDAO.getEquipmentById(equipmentId)
-            console.log("data: ", data);
+            if (result.upsertedId) {
+                await usersDAO.addEquipmentToUser(userId, result.upsertedId)
+            } 
+            const data = await equipmentDAO.getEquipmentByUser(userId)
 
             res.status(200).json(data)
         } catch (e) {
@@ -31,8 +32,7 @@ export default class equipmentController {
             const userId = req.userId
 
             const equipment = await equipmentDAO.getEquipmentByUser(userId)
-            console.log("equipment: ", equipment);
-            
+
             res.status(200).json(equipment)
         } catch (e) {
             res.status(500).json({ error: e.message })
