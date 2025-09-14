@@ -36,10 +36,56 @@ export default class equipmentDAO {
 
     static async getEquipmentByUser(userId) {
         try {
-            return await equipmentCollection.find({ user: new ObjectId(userId) }).toArray()
+            const result = await equipmentCollection.aggregate([
+                { $match: { user: new ObjectId(userId) } },
+                ...lookupSlotItemOnly("head"),
+                ...lookupSlotItemOnly("body"),
+                ...lookupSlotItemOnly("leg"),
+                ...lookupSlotItemOnly("jewelry"),
+                ...lookupSlotItemOnly("weapon"),
+                ...lookupSlotItemOnly("shield")
+            ]).toArray()
+
+            return result[0]
         } catch (e) {
             throw new Error("Error Get Equipment By User: " + e)
         }
     }
-
 }
+
+const lookupSlotItemOnly = (slot) => ([
+    {
+        $addFields: {
+            [`${slot}ObjectId`]: { $toObjectId: `$${slot}` } 
+        }
+    },
+    {
+        $lookup: {
+            from: "inventories",
+            localField: `${slot}ObjectId`, 
+            foreignField: "_id",
+            as: "temp_inventory"
+        }
+    },
+    {
+        $unwind: {
+            path: "$temp_inventory",
+            preserveNullAndEmptyArrays: true
+        }
+    },
+    {
+        $addFields: {
+            [slot]: {
+                $cond: {
+                    if: { $ifNull: ["$temp_inventory", false] },
+                    then: "$temp_inventory.item",
+                    else: null
+                }
+            }
+        }
+    },
+    {
+        $unset: ["temp_inventory", `${slot}ObjectId`]
+    }
+])
+
