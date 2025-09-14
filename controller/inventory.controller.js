@@ -2,7 +2,7 @@ import itemsDAO from "../dao/item.dao.js"
 import usersDAO from "../dao/user.dao.js"
 import Inventory from "../model/inventory.model.js"
 import inventoryDAO from "../dao/inventory.dao.js"
-import { getRandomItemByCategory, getRandomNumber, randomNumberAdd } from "../config/random.js"
+import { addLevelInfo, getRandomItemByCategory, getRandomNumber, randomNumberAdd } from "../config/random.js"
 import scoreDAO from "../dao/score.dao.js"
 import { ObjectId } from "mongodb"
 
@@ -73,7 +73,13 @@ export default class inventoryController {
             const userId = req.userId
             const inventories = await inventoryDAO.getInventoriesByUser(userId)
 
-            res.status(200).json(inventories)
+            const data = inventories.map((item) => ({
+                ...item,
+                levelType: item.item.category === "Gem" ? addLevelInfo(item.item.name)[0] : null,
+                levelColor: item.item.category === "Gem" ? addLevelInfo(item.item.name)[1] : null
+            }))
+
+            res.status(200).json(data)
         } catch (e) {
             res.status(500).json({ error: e.message })
         }
@@ -83,17 +89,17 @@ export default class inventoryController {
         try {
             const id = req.params.id
             const gemId = req.body.gemId
-            
+
             const gem = await inventoryDAO.findInventoryById(gemId)
-            if(!gem)
+            if (!gem)
                 return res.status(404).json({ message: "Gem Not Found" })
 
             const value = randomNumberAdd(gem.item.name)
 
             const data = await inventoryDAO.mosaicGemToInventory(id, value)
-            if(data)
+            if (data)
                 await inventoryDAO.deleteGemAfterMosaic(gemId)
-            
+
             res.status(200).json(data)
         } catch (e) {
             res.status(500).json({ error: e.message })

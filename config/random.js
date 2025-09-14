@@ -31,6 +31,28 @@ const colorRange = {
     Purple: 4
 } 
 
+const levelType = {
+    Crystal: 1,
+    Shard: 2, 
+    Prism: 3, 
+    Obelisk: 4, 
+    Orb: 5, 
+    Jewel: 6, 
+    Hexa: 7, 
+    Cluster: 8,
+}
+
+const levelColor = {
+    Red: 1,
+    Gold: 2,
+    Light_Green: 3,
+    Turquoise: 4,
+    Blue: 5,
+    Dark_Blue: 6,
+    Lilac: 7,
+    Purple: 8
+}
+
 export const getRandomNumber = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min
 }
@@ -54,11 +76,22 @@ export const getRandomItemByCategory = () => {
 }
 
 export const randomNumberAdd = (name) => {
-    const [type, color] = name.split("_")
+    const parts = name.split("_")
+    const type = parts[0]
+    const color = parts.slice(1).join("_")
+    
     const [min, max] = typeRange[type]
     
     const base = getRandomNumber(min, max)
     const value = base + base * colorRange[color]
     
     return Math.floor(value)
+}
+
+export const addLevelInfo = (name) => {
+    const parts = name.split("_")
+    const type = parts[0]
+    const color = parts.slice(1).join("_")
+
+    return [levelType[type], levelColor[color]]
 }
