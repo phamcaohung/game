@@ -53,11 +53,19 @@ export default class itemDAO {
         }
     }
 
-    static async getRandomItem(skip) {
+    static async getRandomItem(skip, query) {
         try {
-            return await itemCollection.find().skip(skip).limit(1).next()
+            return await itemCollection.find(query).skip(skip).limit(1).next()
         } catch (e) {
             throw new Error("Error Getting Random Item: " + e)
+        }
+    }
+
+    static async totalItemsInCategory(query) {
+        try {
+            return await itemCollection.countDocuments(query)
+        } catch (e) {
+            throw new Error("Error Total Items In Category: " + e)
         }
     }
 }
