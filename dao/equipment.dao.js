@@ -56,13 +56,25 @@ export default class equipmentDAO {
 const lookupSlotItemOnly = (slot) => ([
     {
         $addFields: {
-            [`${slot}ObjectId`]: { $toObjectId: `$${slot}` } 
+            [`${slot}ObjectId`]: {
+                $cond: {
+                    if: {
+                        $and: [
+                            { $ne: [`$${slot}`, null] },
+                            { $ne: [`$${slot}`, ""] },
+                            { $eq: [{ $type: `$${slot}` }, "string"] }
+                        ]
+                    },
+                    then: { $toObjectId: `$${slot}` },
+                    else: null
+                }
+            }
         }
     },
     {
         $lookup: {
             from: "inventories",
-            localField: `${slot}ObjectId`, 
+            localField: `${slot}ObjectId`,
             foreignField: "_id",
             as: "temp_inventory"
         }
@@ -81,7 +93,7 @@ const lookupSlotItemOnly = (slot) => ([
                     then: {
                         _id: "$temp_inventory._id",
                         item: "$temp_inventory.item",
-                        atk: "$temp_inventory.atk", 
+                        atk: "$temp_inventory.atk",
                         def: "$temp_inventory.def",
                         hp: "$temp_inventory.hp",
                         lucky: "$temp_inventory.lucky",

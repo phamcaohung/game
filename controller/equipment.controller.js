@@ -33,8 +33,11 @@ export default class equipmentController {
         try {
             const userId = req.userId
 
+            console.log("userId: ", userId);
+            
             const equipment = await equipmentDAO.getEquipmentByUser(userId)
-
+            console.log("equipment: ", equipment);
+            
             res.status(200).json(equipment)
         } catch (e) {
             res.status(500).json({ error: e.message })
