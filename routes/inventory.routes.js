@@ -19,4 +19,6 @@ router.get("/not-gem", inventoryController.getInventoriesNotGem)
 
 router.post("/:id/mosaic", inventoryController.mosaicGem)
 
+router.post("/:id/dismantle", inventoryController.dismantleEquip)
+
 export default router

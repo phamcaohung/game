@@ -11,13 +11,13 @@ const gems = [
 
 const typeRange = {
     Crystal: [1, 10],
-    Shard: [10, 20], 
-    Prism: [10, 30], 
-    Obelisk: [20, 40], 
-    Orb: [20, 50], 
-    Jewel: [30, 60], 
-    Hexa: [30, 70], 
-    Cluster: [40, 100],     
+    Shard: [10, 20],
+    Prism: [10, 30],
+    Obelisk: [20, 40],
+    Orb: [20, 50],
+    Jewel: [30, 60],
+    Hexa: [30, 70],
+    Cluster: [40, 100],
 }
 
 const colorRange = {
@@ -29,16 +29,16 @@ const colorRange = {
     Dark_Blue: 3,
     Lilac: 3.5,
     Purple: 4
-} 
+}
 
 const levelType = {
     Crystal: 1,
-    Shard: 2, 
-    Prism: 3, 
-    Obelisk: 4, 
-    Orb: 5, 
-    Jewel: 6, 
-    Hexa: 7, 
+    Shard: 2,
+    Prism: 3,
+    Obelisk: 4,
+    Orb: 5,
+    Jewel: 6,
+    Hexa: 7,
     Cluster: 8,
 }
 
@@ -62,7 +62,7 @@ export const getRandomItemByCategory = () => {
     if (random < 30) {
         const categories = ['Weapon', 'Body', 'Shield', 'Head', 'Leg', 'Jewelry']
         const index = Math.floor(Math.random() * categories.length)
-        return { category : categories[index], type: null }
+        return { category: categories[index], type: null }
     }
     else {
         const totalWeight = gems.reduce((sum, g) => sum + g.weight, 0)
@@ -75,16 +75,26 @@ export const getRandomItemByCategory = () => {
     }
 }
 
+export const randomGem = () => {
+    const totalWeight = gems.reduce((sum, g) => sum + g.weight, 0)
+    let r = Math.random() * totalWeight
+
+    for (let gem of gems) {
+        if (r < gem.weight) return gem.name 
+        r -= gem.weight
+    }
+}
+
 export const randomNumberAdd = (name) => {
     const parts = name.split("_")
     const type = parts[0]
     const color = parts.slice(1).join("_")
-    
+
     const [min, max] = typeRange[type]
-    
+
     const base = getRandomNumber(min, max)
     const value = base + base * colorRange[color]
-    
+
     return Math.floor(value)
 }
 
