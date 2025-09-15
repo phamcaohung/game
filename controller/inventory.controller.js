@@ -137,7 +137,7 @@ export default class inventoryController {
 
             await inventoryDAO.deleteGemAfterMosaic(id)
 
-            const drop = Math.floor(Math.random() * 3) + 1
+            const drop = Math.floor(Math.random() * 5) + 1
 
             const newInventories = []
 
@@ -145,7 +145,7 @@ export default class inventoryController {
                 const gem = randomGem()
                 console.log("type: ", gem);
                 
-                const query = { name: { $regex: `^${gem}` } }
+                const query = { name: { $regex: `^${gem}` }, category: 'Gem' }
 
                 const totalInCategory = await itemsDAO.totalItemsInCategory(query)
                 const randomIndex = Math.floor(Math.random() * totalInCategory)
